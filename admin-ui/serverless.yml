@@ -1,0 +1,25 @@
+service: user-admin
+
+custom:
+  s3BucketSuffix: webroot
+  s3BucketName: ${self:service}-${self:provider.stage}-${self:custom.s3BucketSuffix}
+  fullstack:
+    domain: 
+      - "user-admin.crowdpoint.tech"
+    certificate: "arn:aws:acm:us-east-1:772617367983:certificate/73f531ba-ade5-47fb-8fc0-d963491f3171"
+    bucketName: ${self:custom.s3BucketSuffix}
+    clientCommand: yarn build          
+    distributionFolder: build            
+    indexDocument: index.html 
+    singlePageApp: true
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage, 'prod'}
+  region: us-east-1
+  memorySize: 1024 # default is 1024
+  timeout: 30 # max for API Gateway
+
+plugins:
+  - fullstack-serverless

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>Crowdpoint Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <style>
+    :root {
+      --black: #070000;
+      --magenta: #a80382;
+      --purple: #5c0b49;
+      --pink: #f505bd;
+      --dusk: #23232b;
+      --green: #065c5a;
+      --teal: #14a8a6;
+      --website-text: #29303e;
+      --button-color: #5938ac;
+    }
+
+    body,
+    html {
+      height: 100%;
+      background-color: #fff;
+      font-family: "Montserrat", sans-serif;
+    }
+
+    #main-container {
+      position: relative;
+      height: 100%;
+    }
+
+    #signup-container, #change-password-container {
+      display: none;
+    }
+
+    a {
+      cursor: pointer;
+    }
+
+    .box {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 25px;
+    }
+
+    .header {
+      padding-bottom: 25px;
+    }
+
+    .logo-container {
+      max-width: 100%;
+      text-align: center;
+      margin-top: -47px;
+      margin-bottom: -20px;
+    }
+
+    #logo {
+      max-width: 200px;
+    }
+
+    #error-alert, #success-alert {
+      display: none;
+    }
+
+    .form-instructions {
+      padding-top: 20px;
+    }
+
+    /* Bootstrap custom theme */
+    .btn-default {
+      font-weight: bold;
+    }
+    .btn-primary {
+      background-color: var(--button-color);
+      font-weight: bold;
+    }
+    .form-control {
+      background-color: #fff;
+      border-color: var(--green);
+      border: 1px solid var(--teal);
+    }
+    /* custom theme end */
+  </style>
+  <body>
+    <div class="main-content">
+      <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4 box">
+        <div class="logo-container">
+          <img id="logo" src="https://ellipsis.crowdpoint.tech/assets/images/logo/logo.svg" alt="CrowdPoint logo"/>
+        </div>
+        <div id="error-alert" class="alert alert-danger"></div>
+        <div id="success-alert" class="alert alert-success"></div>
+        <div id="login-container">
+          <div class="header">
+            <h3><strong>Log in</strong></h3>
+            Don't have an account?
+            <a id="btn-signup-view" href"javascript:;"><strong>Sign Up</strong></a>
+          </div>
+          <form onsubmit="return false;" method="post">
+            <div class="form-group">
+              <label for="login-email">Email address</label>
+              <input type="email" class="form-control" id="login-email" inputmode="email" required autofocus/>
+            </div>
+            <div class="form-group">
+              <label for="login-password" required>Password</label>
+              <input type="password" class="form-control" id="login-password" />
+            </div>
+            <div class="form-group">
+              <a id="btn-change-password-view" href"javascript:;"><strong>Forgot password?</strong></a>
+            </div>
+            <div class="captcha-container form-group"></div>
+            <button type="submit" id="btn-login" class="btn btn-primary btn-block btn-lg">
+              Log In
+            </button>
+            <!-- <hr />
+            <button type="button" id="btn-google" class="btn btn-default btn-danger btn-block">
+              Log In with Google
+            </button> -->
+          </form>
+        </div>
+        <div id="signup-container">
+          <div class="header">
+            <h3><strong>Sign up</strong></h3>
+            <span>Have an account?
+              <a id="btn-login-view" href"javascript:;"><strong>Log in</strong></a>
+            </span>
+          </div>
+          <form onsubmit="return false;" method="post">
+            <div class="form-group">
+              <label for="signup-email">Email address</label>
+              <input type="email" class="form-control" id="signup-email" inputmode="email" required autofocus />
+            </div>
+            <div class="form-group">
+              <label for="signup-password">Password</label>
+              <input type="password" class="form-control" id="signup-password" required />
+            </div>
+            <div class="form-group">
+              <label for="signup-phone">Phone Number</label>
+              <input type="tel" class="form-control" id="signup-phone" inputmode="tel" required />
+            </div>
+            <!-- <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" class="form-control" id="password" placeholder="Enter your password" required />
+            </div> -->
+            <div class="captcha-container form-group"></div>
+            <button type="button" id="btn-signup" class="btn btn-primary btn-block">
+              <strong>Sign Up</strong>
+            </button>
+          </form>
+          </div>
+          <div id="change-password-container">
+            <div class="header">
+              <h3><strong>Reset Password</strong></h3>
+              <span>Have an account?
+                <a id="btn-reset-password-to-login-view" href"javascript:;"><strong>Log in</strong></a>
+              </span>
+              <p class="form-instructions">Enter your email address and we will send you instructions to reset your password.</p>
+            </div>
+
+            <form onsubmit="return false;" method="post">
+              <div class="form-group">
+                <label for="change-password-email">Email</label>
+                <input type="email" class="form-control" id="change-password-email" inputmode="email" required autofocus/>
+              </div>
+
+              <div class="captcha-container form-group"></div>
+              <button type="submit" id="btn-change-password" class="btn btn-primary btn-block">
+                Send password reset email
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--[if IE 8]>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/ie8/0.2.5/ie8.js"></script>
+    <![endif]-->
+
+    <!--[if lte IE 9]>
+      <script src="https://cdn.auth0.com/js/polyfills/1.0/base64.min.js"></script>
+      <script src="https://cdn.auth0.com/js/polyfills/1.0/es5-shim.min.js"></script>
+    <![endif]-->
+
+    <script src="https://cdn.auth0.com/js/auth0/9.14/auth0.min.js"></script>
+    <script src="https://cdn.auth0.com/js/polyfills/1.0/object-assign.min.js"></script>
+    <script>
+      window.addEventListener("load", function () {
+        var config = JSON.parse(
+          decodeURIComponent(escape(window.atob("@@config@@")))
+        );
+        document.getElementById("logo").src = config.icon
+
+        var leeway = config.internalOptions.leeway;
+        if (leeway) {
+          var convertedLeeway = parseInt(leeway);
+
+          if (!isNaN(convertedLeeway)) {
+            config.internalOptions.leeway = convertedLeeway;
+          }
+        }
+
+        var params = Object.assign(
+          {
+            overrides: {
+              __tenant: config.auth0Tenant,
+              __token_issuer: config.authorizationServer.issuer,
+            },
+            domain: config.auth0Domain,
+            clientID: config.clientID,
+            redirectUri: config.callbackURL,
+            responseType: "code",
+          },
+          config.internalOptions
+        );
+
+        var webAuth = new auth0.WebAuth(params);
+        var databaseConnection = "Username-Password-Authentication";
+        var captcha = webAuth.renderCaptcha(
+          document.querySelector(".captcha-container")
+        );
+
+        function login(e) {
+          clearError();
+          e.preventDefault();
+          var button = this;
+          var username = document.getElementById("login-email").value;
+          var password = document.getElementById("login-password").value;
+          button.disabled = true;
+          webAuth.login(
+            {
+              realm: databaseConnection,
+              username: username,
+              password: password,
+              captcha: captcha.getValue(),
+            },
+            function (err, data) {
+              if (err) displayError(err);
+              button.disabled = false;
+            }
+          );
+        }
+
+        function signup(e) {
+          e.preventDefault();
+          clearError();
+          const button = this;
+          const email = document.getElementById("signup-email").value;
+          const password = document.getElementById("signup-password").value;
+          const signupPhone = document.getElementById("signup-phone").value;
+
+          button.disabled = true;
+          webAuth.signup(
+            {
+              connection: databaseConnection,
+              email: email,
+              password: password,
+              captcha: captcha.getValue(),
+              user_metadata: {
+                phone: signupPhone,
+              }
+            },
+            function (err) {
+              button.disabled = false;
+              if (err) {
+                displayError(err);
+              } else {
+                loginView()
+                displaySuccess("Check your email to validate your account before logging in.", 5000);
+              }
+            } 
+          );
+        }
+
+        function changePassword() {
+          clearError();
+          const email = document.getElementById("change-password-email").value;
+          webAuth.changePassword(
+            {
+              connection: databaseConnection,
+              email: email,
+            },
+            function (err, resp) {
+              if (err) {
+                getPasswordResetResponseError(displayError(err));
+              } else {
+                loginView();
+                displaySuccess("Check your email for instructions to reset your password.", 5000);
+                console.log(resp);
+              }
+            }
+          );
+        }
+
+        function loginWithGoogle() {
+          clearError();
+          console.log("login with google")
+          webAuth.authorize(
+            {
+              connection: "google-oauth2",
+            },
+            function (err) {
+              if (err) displayError(err);
+            }
+          );
+        }
+        
+        /** Extract error message from response */
+        function getErrorMsg(json) {
+          let error = "";
+          const passwordErrors = {
+            PasswordStrengthError: "weakPasswordError",
+            PasswordHistoryError: "passwordHistoryError",
+            PasswordDictionaryError: "passwordDictError",
+            PasswordNoUserInfoError: "passwordNoUserInfoError",
+          };
+          if (json.name !== undefined && passwordErrors[json.name]) {
+            if (passwordErrors[json.name]) {
+              return (
+                passwordErrors[json.name] + "\n" + json.policy &&
+                "Password should be \n" + json.policy
+              );
+            }
+          }
+          if (json.message !== undefined && json.policy !== undefined) {
+            return json.message + "\n" + json.policy;
+          }
+          if (
+            json.original.response === undefined ||
+            json.original.response.body === undefined
+          ) {
+            return json.error;
+          } else {
+            const body = json.original.response.body;
+            if (body.error !== undefined) {
+              return body.error;
+            }
+            if (body.description !== undefined) {
+              return body.description;
+            }
+            return body;
+          }
+        }
+
+        function displayError(err) {
+          captcha.reload();
+          console.log("Error output");
+          console.log(JSON.stringify(err));
+          const errorAlert = document.getElementById("error-alert");
+          errorAlert.innerHTML = getErrorMsg(err)
+          errorAlert.style.display = "block";
+        }
+
+        function clearError() {
+          const errorAlert = document.getElementById("error-alert");
+          errorAlert.innerHTML = "";
+          errorAlert.style.display = "none";
+        }
+
+        /** 
+         * Display success alert that will disappear after timeout (if set)
+         * and execute callback, delayed by timeout if set.
+         */
+        function displaySuccess(message, timeout = 0, cb) {
+          const successAlert = document.getElementById("success-alert");
+          successAlert.innerHTML = message;
+          successAlert.style.display = "block";
+          if (timeout > 0) {
+            setTimeout(() => {
+              clearSuccess();
+              if(typeof cb !== 'undefined') {
+                cb();
+              }
+            }, timeout);
+          } else {
+            if(typeof cb !== 'undefined') {
+              cb();
+            }
+          }
+        }
+
+        function clearSuccess() {
+          const successAlert = document.getElementById("success-alert");
+          successAlert.innerHTML = "";
+          successAlert.style.display = "none";
+        }
+
+        function loginView() {
+          document.getElementById('login-container').style.display = 'block';
+          document.getElementById('signup-container').style.display = 'none';
+          document.getElementById('change-password-container').style.display = 'none';
+          clearError();
+        }
+
+        function signupView() {
+          let loginContainer = document.getElementById("login-container");
+          loginContainer.style.display = "none";
+          document.getElementById("signup-container").style.display = "block";
+          document.getElementById('change-password-container').style.display = 'none';
+          clearError();
+        }
+
+        function changePasswordView() {
+          document.getElementById("change-password-container").style.display = "block";
+          document.getElementById("login-container").style.display = "none";
+          document.getElementById('signup-container').style.display = 'none';
+          clearError();
+        }
+
+        document.getElementById("btn-login").addEventListener("click", login);
+        // document
+        //   .getElementById("btn-google")
+        //   .addEventListener("click", loginWithGoogle);
+        document.getElementById("btn-signup").addEventListener("click", signup);
+        document.getElementById("btn-change-password").addEventListener("click", changePassword);
+        document
+          .getElementById("btn-signup-view")
+          .addEventListener("click", signupView);
+        document
+          .getElementById("btn-login-view")
+          .addEventListener("click", loginView);
+        document
+          .getElementById("btn-reset-password-to-login-view")
+          .addEventListener("click", loginView);
+        document
+          .getElementById("btn-change-password-view")
+          .addEventListener("click", changePasswordView);
+
+        document
+          .getElementById("btn-signup-view")
+          .addEventListener("click", signupView);
+      });
+    </script>
+  </body>
+</html>
