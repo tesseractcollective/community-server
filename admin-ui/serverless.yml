@@ -1,12 +1,12 @@
-service: user-admin
+service: thelitas-admin
 
 custom:
   s3BucketSuffix: webroot
   s3BucketName: ${self:service}-${self:provider.stage}-${self:custom.s3BucketSuffix}
   fullstack:
     domain: 
-      - "user-admin.crowdpoint.tech"
-    certificate: "arn:aws:acm:us-east-1:772617367983:certificate/73f531ba-ade5-47fb-8fc0-d963491f3171"
+      - "admin.thelitas.co"
+    certificate: "	arn:aws:acm:us-east-1:315118507072:certificate/416d5b45-4454-4385-9f3e-480dd42097b7"
     bucketName: ${self:custom.s3BucketSuffix}
     clientCommand: yarn build          
     distributionFolder: build            

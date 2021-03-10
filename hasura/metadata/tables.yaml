@@ -36,6 +36,179 @@
       check: null
 - table:
     schema: public
+    name: groups
+  object_relationships:
+  - name: location
+    using:
+      foreign_key_constraint_on: locationId
+  array_relationships:
+  - name: posts
+    using:
+      foreign_key_constraint_on:
+        column: groupId
+        table:
+          schema: public
+          name: posts
+  - name: userGroups
+    using:
+      foreign_key_constraint_on:
+        column: groupId
+        table:
+          schema: public
+          name: userGroups
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - isPrivate
+      - description
+      - name
+      - photoUrl
+      - createdAt
+      - updatedAt
+      - id
+      - locationId
+      filter: {}
+- table:
+    schema: public
+    name: locations
+- table:
+    schema: public
+    name: posts
+  object_relationships:
+  - name: group
+    using:
+      foreign_key_constraint_on: groupId
+  - name: user
+    using:
+      foreign_key_constraint_on: userId
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        userId:
+          _eq: X-Hasura-User-Id
+      set:
+        userId: x-hasura-User-Id
+      columns:
+      - body
+      - groupId
+      - photoUrl
+      - userId
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - createdAt
+      - updatedAt
+      - userId
+      - groupId
+      - body
+      - photoUrl
+      filter:
+        _or:
+        - userId:
+            _eq: X-Hasura-User-Id
+        - group:
+            userGroups:
+              userId:
+                _eq: X-Hasura-User-Id
+        - groupId:
+            _is_null: true
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - body
+      - photoUrl
+      filter:
+        userId:
+          _eq: X-Hasura-User-Id
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        userId:
+          _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: userGroups
+  object_relationships:
+  - name: group
+    using:
+      foreign_key_constraint_on: groupId
+  - name: user
+    using:
+      foreign_key_constraint_on: userId
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        _or:
+        - _and:
+          - group:
+              isPrivate:
+                _eq: false
+          - userId:
+              _eq: X-Hasura-User-Id
+        - group:
+            userGroups:
+              _and:
+              - id:
+                  _eq: X-Hasura-User-Id
+              - isAdmin:
+                  _eq: true
+      columns:
+      - groupId
+      - userId
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns: []
+      filter:
+        _or:
+        - userId:
+            _eq: X-Hasura-User-Id
+        - group:
+            userGroups:
+              userId:
+                _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns: []
+      filter:
+        _or:
+        - userId:
+            _eq: X-Hasura-User-Id
+        - group:
+            userGroups:
+              _and:
+              - id:
+                  _eq: X-Hasura-User-Id
+              - isAdmin:
+                  _eq: true
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        _or:
+        - userId:
+            _eq: X-Hasura-User-Id
+        - group:
+            userGroups:
+              _and:
+              - id:
+                  _eq: X-Hasura-User-Id
+              - isAdmin:
+                  _eq: true
+- table:
+    schema: public
     name: users
   array_relationships:
   - name: devices
@@ -45,6 +218,20 @@
         table:
           schema: public
           name: devices
+  - name: posts
+    using:
+      foreign_key_constraint_on:
+        column: userId
+        table:
+          schema: public
+          name: posts
+  - name: userGroups
+    using:
+      foreign_key_constraint_on:
+        column: userId
+        table:
+          schema: public
+          name: userGroups
   select_permissions:
   - role: user
     permission:

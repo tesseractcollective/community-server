@@ -6,9 +6,9 @@ interface AuthProviderProps {
 }
 
 export const auth0Config = {
-  domain: "identity.crowdpoint.tech",
-  clientId: "6iTqUbj8EDCFi2711sLQVVfS8SNdPWv1",
-  audience: "https://identity.crowdpoint.tech",
+  domain: process.env.REACT_APP_AUTH_DOMAIN || "",
+  clientId: process.env.REACT_APP_AUTH_CLIENT_ID || "",
+  audience: process.env.REACT_APP_AUTH_AUDIENCE || "",
 }
 
 export default ({

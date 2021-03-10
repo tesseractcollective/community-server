@@ -9,8 +9,9 @@ import authProvider from "./authProvider";
 import { UserEdit, UserList } from "./components/users";
 import { DeviceList, DeviceShow } from "./components/devices";
 import { theme } from "./theme";
+import { GroupCreate, GroupEdit, GroupList } from "./components/groups";
 
-const hasuraUrl = "https://evolving-lionfish-28.hasura.app/v1/graphql";
+const hasuraUrl = process.env.REACT_APP_HASURA_URL;
 
 const App = () => {
   const {
@@ -56,7 +57,7 @@ const App = () => {
   }, [isLoading, isAuthenticated, loginWithRedirect]);
   
   if (isLoading || !isAuthenticated || !dataProvider) {
-    return <Loading loadingPrimary="CrowdPoint Technology Admin" loadingSecondary="Loading" />
+    return <Loading loadingPrimary="Loading" loadingSecondary="" />
   }
 
   return (
@@ -69,6 +70,12 @@ const App = () => {
         name="users"
         list={UserList}
         edit={UserEdit}
+      />
+      <Resource 
+        name="groups"
+        list={GroupList}
+        edit={GroupEdit}
+        create={GroupCreate}
       />
       <Resource 
         name="devices"

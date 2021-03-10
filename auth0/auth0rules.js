@@ -1,10 +1,5 @@
 function setRoleToUser(user, context, callback) {
     console.log('setRoleToUser');
-    // Roles should only be set to verified users.
-    if (!user.email || !user.email_verified) {
-      	console.log('email not verified, aborting');
-        return callback(null, user, context);
-    }
     console.log('user', JSON.stringify(user));
 
     const query = `query getRoleForEmail($email: String!) {

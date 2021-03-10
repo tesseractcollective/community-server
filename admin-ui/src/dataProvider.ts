@@ -16,7 +16,7 @@ export const customDataProvider = (dataProvider: any) => {
     const image = params?.data?.image;
     if (
       (fetchType === "CREATE" || fetchType === "UPDATE") &&
-      resource === "pollOptions" &&
+      resource === "groups" &&
       image?.rawFile instanceof File
     ) {
       return convertFileToBase64(image.rawFile).then((picture64: any) => {
