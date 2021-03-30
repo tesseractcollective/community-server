@@ -1,6 +1,6 @@
 - table:
     schema: public
-    name: devices
+    name: device
   object_relationships:
   - name: user
     using:
@@ -36,45 +36,142 @@
       check: null
 - table:
     schema: public
-    name: groups
+    name: file
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        userId:
+          _eq: X-Hasura-User-Id
+      set:
+        userId: x-hasura-User-Id
+      columns:
+      - cloudFrontData
+      - contentLength
+      - domain
+      - fileType
+      - groupId
+      - mimeType
+      - name
+      - postId
+      - userId
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - created_at
+      - updated_at
+      - fileType
+      - postId
+      - groupId
+      - userId
+      - name
+      - mimeType
+      - contentLength
+      - cloudFrontData
+      - domain
+      filter:
+        userId:
+          _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - cloudFrontData
+      - contentLength
+      - domain
+      - fileType
+      - groupId
+      - mimeType
+      - name
+      - postId
+      - userId
+      filter:
+        userId:
+          _eq: X-Hasura-User-Id
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        userId:
+          _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: fileType
+  is_enum: true
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - type
+      filter: {}
+- table:
+    schema: public
+    name: group
   object_relationships:
   - name: location
     using:
       foreign_key_constraint_on: locationId
   array_relationships:
+  - name: files
+    using:
+      foreign_key_constraint_on:
+        column: groupId
+        table:
+          schema: public
+          name: file
   - name: posts
     using:
       foreign_key_constraint_on:
         column: groupId
         table:
           schema: public
-          name: posts
-  - name: userGroups
+          name: post
+  - name: userGroup
     using:
       foreign_key_constraint_on:
         column: groupId
         table:
           schema: public
-          name: userGroups
+          name: userGroup
   select_permissions:
   - role: user
     permission:
       columns:
-      - isPrivate
-      - description
-      - name
-      - photoUrl
+      - id
       - createdAt
       - updatedAt
-      - id
+      - name
+      - description
       - locationId
+      - isPrivate
       filter: {}
 - table:
     schema: public
-    name: locations
+    name: location
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - createdAt
+      - updatedAt
+      - name
+      - city
+      - state
+      - country
+      - countryCode
+      - formattedAddress
+      - latitude
+      - longitude
+      - addressForLanguage
+      filter: {}
 - table:
     schema: public
-    name: posts
+    name: post
   object_relationships:
   - name: group
     using:
@@ -82,6 +179,14 @@
   - name: user
     using:
       foreign_key_constraint_on: userId
+  array_relationships:
+  - name: files
+    using:
+      foreign_key_constraint_on:
+        column: postId
+        table:
+          schema: public
+          name: file
   insert_permissions:
   - role: user
     permission:
@@ -93,7 +198,6 @@
       columns:
       - body
       - groupId
-      - photoUrl
       - userId
       backend_only: false
   select_permissions:
@@ -106,13 +210,12 @@
       - userId
       - groupId
       - body
-      - photoUrl
       filter:
         _or:
         - userId:
             _eq: X-Hasura-User-Id
         - group:
-            userGroups:
+            userGroup:
               userId:
                 _eq: X-Hasura-User-Id
         - groupId:
@@ -122,7 +225,6 @@
     permission:
       columns:
       - body
-      - photoUrl
       filter:
         userId:
           _eq: X-Hasura-User-Id
@@ -135,81 +237,17 @@
           _eq: X-Hasura-User-Id
 - table:
     schema: public
-    name: userGroups
-  object_relationships:
-  - name: group
-    using:
-      foreign_key_constraint_on: groupId
-  - name: user
-    using:
-      foreign_key_constraint_on: userId
-  insert_permissions:
-  - role: user
-    permission:
-      check:
-        _or:
-        - _and:
-          - group:
-              isPrivate:
-                _eq: false
-          - userId:
-              _eq: X-Hasura-User-Id
-        - group:
-            userGroups:
-              _and:
-              - id:
-                  _eq: X-Hasura-User-Id
-              - isAdmin:
-                  _eq: true
-      columns:
-      - groupId
-      - userId
-      backend_only: false
+    name: reaction
+  is_enum: true
   select_permissions:
   - role: user
     permission:
-      columns: []
-      filter:
-        _or:
-        - userId:
-            _eq: X-Hasura-User-Id
-        - group:
-            userGroups:
-              userId:
-                _eq: X-Hasura-User-Id
-  update_permissions:
-  - role: user
-    permission:
-      columns: []
-      filter:
-        _or:
-        - userId:
-            _eq: X-Hasura-User-Id
-        - group:
-            userGroups:
-              _and:
-              - id:
-                  _eq: X-Hasura-User-Id
-              - isAdmin:
-                  _eq: true
-      check: null
-  delete_permissions:
-  - role: user
-    permission:
-      filter:
-        _or:
-        - userId:
-            _eq: X-Hasura-User-Id
-        - group:
-            userGroups:
-              _and:
-              - id:
-                  _eq: X-Hasura-User-Id
-              - isAdmin:
-                  _eq: true
+      columns:
+      - name
+      filter: {}
 - table:
     schema: public
-    name: users
+    name: user
   array_relationships:
   - name: devices
     using:
@@ -217,21 +255,28 @@
         column: userId
         table:
           schema: public
-          name: devices
+          name: device
+  - name: files
+    using:
+      foreign_key_constraint_on:
+        column: userId
+        table:
+          schema: public
+          name: file
   - name: posts
     using:
       foreign_key_constraint_on:
         column: userId
         table:
           schema: public
-          name: posts
-  - name: userGroups
+          name: post
+  - name: userGroup
     using:
       foreign_key_constraint_on:
         column: userId
         table:
           schema: public
-          name: userGroups
+          name: userGroup
   select_permissions:
   - role: user
     permission:
@@ -253,3 +298,92 @@
         id:
           _eq: X-Hasura-User-Id
       check: null
+- table:
+    schema: public
+    name: userGroup
+  object_relationships:
+  - name: group
+    using:
+      foreign_key_constraint_on: groupId
+  - name: user
+    using:
+      foreign_key_constraint_on: userId
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        _or:
+        - _and:
+          - group:
+              isPrivate:
+                _eq: false
+          - userId:
+              _eq: X-Hasura-User-Id
+        - group:
+            userGroup:
+              _and:
+              - userId:
+                  _eq: X-Hasura-User-Id
+              - isAdmin:
+                  _eq: true
+      columns:
+      - groupId
+      - userId
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - groupId
+      - userId
+      filter:
+        _or:
+        - userId:
+            _eq: X-Hasura-User-Id
+        - group:
+            userGroup:
+              userId:
+                _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - groupId
+      - userId
+      filter:
+        _or:
+        - userId:
+            _eq: X-Hasura-User-Id
+        - group:
+            userGroup:
+              _and:
+              - userId:
+                  _eq: X-Hasura-User-Id
+              - isAdmin:
+                  _eq: true
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        _or:
+        - userId:
+            _eq: X-Hasura-User-Id
+        - group:
+            userGroup:
+              _and:
+              - userId:
+                  _eq: X-Hasura-User-Id
+              - isAdmin:
+                  _eq: true
+- table:
+    schema: public
+    name: userPostReaction
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - userId
+      - postId
+      - reaction
+      filter: {}
